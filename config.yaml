@@ -1,0 +1,140 @@
+# PromptPulse — Central Configuration
+# All runtime settings are governed by this file. No values should be hard-coded
+# in application logic. Settings are validated strictly via Pydantic at startup.
+
+# 1. Project Settings
+project:
+  name: "PromptPulse"
+  random_seed: 42
+  logging_level: "INFO" # DEBUG, INFO, WARNING, ERROR, CRITICAL
+
+# 2. Model Settings
+model:
+  # Loading source: "huggingface" for local HF inference, or "mock" for deterministic tests
+  loading_source: "huggingface"
+  
+  # Hugging Face model repository or local path
+  model_id: "HuggingFaceTB/SmolLM2-1.7B-Instruct"
+  
+  # Specific Git commit hash or branch (optional)
+  model_revision: null
+  
+  # Target hardware: "auto", "cpu", or "cuda"
+  device: "cuda"
+  
+  # Precision: "auto", "float32", "float16", or "bfloat16"
+  dtype: "float16"
+  
+  # Local cache directory for model weights (null = default HF cache)
+  cache_dir: null
+  
+  # Trust custom code from remote repositories
+  trust_remote_code: false
+
+# 3. Experiment Settings
+experiment:
+  # Number of successful generations required per prompt (N)
+  successful_responses_required: 100
+  
+  # Maximum retry attempts per prompt for retryable errors before reporting failure
+  max_retries: 3
+  
+  # Error categories permitted to trigger retries
+  retryable_errors:
+    - "rate_limit"
+    - "timeout"
+    - "connection_error"
+    - "out_of_memory"
+    - "generation_exception"
+  
+  # Whether the prompt presentation order is shuffled
+  shuffle_prompts: false
+  
+  # Whether to safely resume incomplete experiments by skipping existing successful runs
+  reuse_completed_runs: true
+
+# 4. Generation Settings
+generation:
+  # Sampling temperature (0.0 for deterministic greedy decoding, >0 for stochastic)
+  temperature: 0.7
+  
+  # Nucleus sampling probability cutoff
+  top_p: 0.9
+  
+  # Maximum new tokens to generate
+  max_new_tokens: 256
+  
+  # Enable stochastic sampling
+  do_sample: true
+
+  # Parallel response generation batch size ("ek sath" concurrent outputs)
+  batch_size: 5
+
+# 5. Dataset Settings
+dataset:
+  # Source type: "local_jsonl"
+  source: "local_jsonl"
+  
+  # Path to JSONL prompt file (will be populated with real benchmark datasets)
+  file_path: "datasets/prompts.jsonl"
+  
+  # Selected categories to include in the benchmark
+  categories:
+    - "maths"
+    - "coding"
+    - "factual"
+    - "creative"
+    - "ambiguous"
+  
+  # Number of prompts to download and evaluate per category (e.g. 20 -> 5x20 = 100 prompts)
+  prompts_per_category: 20
+  max_prompts_per_category: 20
+  
+  # Optional split or subset name
+  subset: null
+  
+  # Shuffle prompts within dataset before limiting
+  shuffle: false
+
+# 6. Analysis Settings
+analysis:
+  # Compute exact-response variability metrics (entropy, uniqueness, streaks)
+  exact_response_analysis: true
+  
+  # Text normalization policy applied prior to exact equality checks:
+  # "conservative" = normalize line endings (\r\n -> \n) and strip trailing whitespace only.
+  # Raw text is always stored untouched.
+  normalization_policy: "conservative"
+  
+  # Semantic analysis (Phase 3 optional - requires sentence-transformers)
+  semantic_analysis: false
+  
+  # Sentence embedding model for semantic clustering
+  embedding_model_id: "sentence-transformers/all-MiniLM-L6-v2"
+  
+  # Cosine similarity threshold for semantic clustering
+  semantic_clustering_threshold: 0.85
+  
+  # Evaluate correctness against expected answers / unit tests
+  correctness_evaluation: false
+
+# 7. Storage Settings
+storage:
+  # Local SQLite database path
+  db_path: "data/promptpulse.db"
+  
+  # Retain original immutable response text alongside hashes
+  retain_raw_responses: true
+  
+  # Retain failed attempts with error messages and timestamps
+  retain_failed_attempts: true
+
+# 8. Reporting Settings
+reporting:
+  # Export formats: "json", "csv", or both
+  output_formats:
+    - "json"
+    - "csv"
+  
+  # Directory where report summaries will be written
+  report_dir: "reports"
