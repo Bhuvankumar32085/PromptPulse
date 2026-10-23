@@ -252,19 +252,25 @@ Across **10,000 independent generations** ($N = 100$ runs per prompt across 100 
 
 ---
 
-### Visualization Gallery & Research Insights
+### Visualization Gallery: Plain-English & Non-Technical Guides
 
-All charts below are generated directly from our 10,000 empirical runs with self-explanatory labels, axis interpretations, and key findings.
+*Each chart below is built directly from our 10,000 empirical runs and explained with everyday real-world examples so that anyone—even without a mathematical or machine learning background—can immediately understand what is happening.*
+
+---
 
 #### Chart 1: How Consistent is the AI Across Different Tasks? (Repetition vs. Randomness)
 
 ![AI Consistency by Category](assets/plots/ai_consistency_by_category.png)
 
-- **What this chart shows**: It compares how predictable or unpredictable the AI is when given the exact same prompt 100 times across 5 different task domains.
-- **How to read it**:
-  - **Left Subplot (Unpredictability Score / Entropy)**: Lower values indicate high consistency where the AI provides identical or near-identical answers. Higher values indicate high variety where the AI creates different outputs every run.
-  - **Right Subplot (Repetition Rate %)**: The percentage of runs that produced an identical copy of an earlier answer.
-- **Key Finding**: Knowledge retrieval tasks (**Factual** and **Coding**) exhibit high repetition rates (up to **38.9%** in Factual) because facts and core code logic are fixed. Conversely, **Creative** prompts produce **99.9%** unique responses across 100 runs.
+> **💡 The Big Intuitive Idea**: If you ask an AI the exact same question 100 times in a row, does it act like a strict calculator (giving the exact same answer every time), or does it act like an imaginative poet (giving a brand-new answer every time)?
+
+- **What the Numbers Mean (Out of 100 Runs)**:
+  - **Left Graph (Randomness / Variety)**: Think of this as the AI's *"Wildness Score"*. A low score means the AI stays grounded and gives the same predictable answer. A high score means the AI's imagination runs wild.
+  - **Right Graph (Repetition Rate %)**: Out of 100 times, how often did the AI produce an exact, word-for-word identical copy of an earlier answer?
+- **Real-World Non-Technical Example**:
+  - **Factual (38.9% Repetition)**: If you ask *"What is the capital of France?"* 100 times, you *want* high repetition ("Paris"). It would be a disaster if it gave 100 different capital cities!
+  - **Creative (0.1% Repetition)**: If you ask *"Write a bedtime story about a baby dragon"*, you *want* fresh ideas every time, not the exact same story repeated over and over.
+- **Key Takeaway**: The AI knows when to hold back and when to be creative. For factual tasks, it repeats itself nearly 40% of the time; for creative writing, 99.9% of responses are completely fresh.
 
 ---
 
@@ -272,11 +278,16 @@ All charts below are generated directly from our 10,000 empirical runs with self
 
 ![When Does AI Repeat](assets/plots/when_does_ai_repeat.png)
 
-- **What this chart shows**: Tracks the accumulation of unique answers as the sample size increases from 1 to 100 runs for the same prompt.
-- **How to read it**:
-  - The **dashed diagonal line** represents perfect randomness (if every single run produced a brand-new answer, $K = N$).
-  - A **downward curving line** that plateaus (like Factual at ~61 answers) means the model exhausted its ideas early and began repeating previously generated answers.
-- **Key Finding**: In factual queries, the AI runs out of variations after ~35 to 40 runs, after which it repeats identical answers. In creative writing, the curve remains a straight diagonal line ($K \approx 100$), demonstrating that temperature sampling never mode-collapses for open-ended prompts.
+> **💡 The Big Intuitive Idea**: Imagine asking a friend the same question 100 times. At first, they might phrase their answer in a few different ways, but eventually, they run out of new ways to say it and start repeating themselves. At what point does the AI run out of new things to say?
+
+- **What the Numbers Mean**:
+  - **Bottom Axis (X-axis, 1 to 100)**: How many times we repeated the prompt to the AI.
+  - **Side Axis (Y-axis, 0 to 100)**: How many unique/different answers we have collected so far.
+  - **The Dashed Diagonal Line**: The theoretical *"Infinite Idea Line"*. If an AI generated a brand-new answer on every single attempt without ever repeating, it would follow this 45-degree straight line ($K = N$).
+- **Real-World Non-Technical Example**:
+  - **Factual Curve Bends Early (~35 to 40 runs)**: Ask *"Who invented the telephone?"* 100 times. By attempt 35, the AI has said *"Alexander Graham Bell"* in every possible sentence phrasing it knows. After that, the curve flattens out (saturates) because it simply repeats its previous answers.
+  - **Creative Line Stays Perfectly Straight**: Ask *"Write a sci-fi poem"*. Even on attempt 100, the AI is still inventing brand-new rhymes and plots ($K \approx 100$). It never runs out of creative variations!
+- **Key Takeaway**: Fact-based knowledge has a natural ceiling (it saturates around run 35), while open-ended creativity scales endlessly.
 
 ---
 
@@ -284,12 +295,21 @@ All charts below are generated directly from our 10,000 empirical runs with self
 
 ![Wording vs Meaning Clusters](assets/plots/wording_vs_meaning_clusters.png)
 
-- **What this chart shows**: Differentiates surface-level phrasing changes (exact string differences) from actual changes in semantic meaning.
-- **How to read it**:
-  - **Blue Bars (Unique Wording)**: Number of unique text responses when checking exact string equality.
-  - **Orange Bars (Real Meaning Clusters)**: Number of distinct semantic groups after clustering responses by cosine similarity.
-  - The gap between blue and orange represents the **Phrasing Multiplier** (the model rephrasing the same underlying concept).
-- **Key Finding**: In **Coding** and **Maths**, the AI rephrases intermediate sentences constantly (yielding 99.1% unique words in Maths), but **over 35% of those answers share the exact same mathematical logic or code implementation**. In **Creative** tasks, almost 100% of responses are genuinely different in both wording and meaning.
+> **💡 The Big Intuitive Idea**: Does changing a few words mean you actually gave a new answer?  
+> Consider these two sentences:  
+> 1. *"The cat sat on the mat."*  
+> 2. *"On the mat, the cat was sitting."*  
+> Word-for-word, a computer sees 2 different sentences. But in real life, any human knows both sentences mean the exact same thing! This chart exposes that exact illusion.
+
+- **What the Bars Represent (Calculated per 100 Runs)**:
+  - 🟦 **Blue Bar (Unique Wording)**: Computer counted word-by-word differences. If even a single comma or word changed, it was counted as a "new" response.
+  - 🟧 **Orange Bar (Real Meaning Groups)**: AI grouped responses by their *actual solution meaning*. If two responses said the same thing in different words, they were grouped into 1 single meaning cluster.
+  - **The Gap Between Blue and Orange ("The Rephrasing Multiplier")**: Shows where the AI is simply rephrasing the same old answer using different English words!
+- **Real-World Non-Technical Examples**:
+  - **Coding (MBPP): Blue 71.6 vs Orange 37.0 (The Biggest Illusion!)**: Out of 100 runs, the code looked different 72 times on the surface. But when looking at the underlying logic, the AI only had **37 real coding solutions**! The other 35 runs were just the same logic with a renamed variable (e.g. `x` changed to `num`).
+  - **Maths (GSM8K): Blue 99.1 vs Orange 64.1**: In word problems, the AI talks step-by-step (*"First Natalia had 48...", "Natalia starts with 48..."*). While 99 out of 100 answers looked different in wording, **over 35 runs shared the exact same mathematical solution**!
+  - **Creative: Blue 100.0 vs Orange 99.2**: Here, there is zero illusion. Almost every run produced both unique words AND a uniquely different story.
+- **Key Takeaway**: Don't judge an AI by its vocabulary alone! In technical tasks (Coding & Maths), 35% to 50% of "unique" answers are just cosmetic rephrasings of the same core idea.
 
 ---
 
@@ -297,12 +317,18 @@ All charts below are generated directly from our 10,000 empirical runs with self
 
 ![Accuracy and Correctness](assets/plots/accuracy_and_correctness.png)
 
-- **What this chart shows**: Evaluates whether the AI's repeated outputs are factually and logically accurate against verified benchmark reference answers (GSM8K, MBPP, and verified factual QA).
-- **How to read it**: Bars show the average verified correctness percentage across 100 runs per prompt. The dashed horizontal line indicates the 100% target accuracy.
-- **Key Finding**:
-  - **Factual**: Reaches **91.2% accuracy**; the AI repeats the correct fact frequently and reliably.
-  - **Maths (GSM8K)**: Achieves **46.7% accuracy**. Crucially, when the AI makes an error in Maths, it almost never repeats the same mistake—it hallucinates a different incorrect number on nearly every run.
-  - **Coding (MBPP)**: 1.7B parameter models achieve **20.4% single-pass functional accuracy**, frequently omitting edge-case return values while attempting various alternative implementations.
+> **💡 The Big Intuitive Idea**: An AI can sound very confident and repeat itself consistently—but is it actually telling the truth? This chart compares the AI's repeated answers against verified answer keys to test its real-world accuracy.
+
+- **What the Numbers Mean**:
+  - **Y-axis (0% to 100%)**: What percentage of the AI's 100 answers were factually and mathematically correct when checked against official benchmark answer keys (GSM8K, MBPP, Factual QA).
+  - **Dashed Line at 100%**: The target for a perfect AI (getting it right every single time).
+- **The Non-Technical Breakdown**:
+  - **Factual (91.2% Accuracy)**: When asked factual questions, the AI gets it right 9 out of 10 times. Its repetition is reliable and trustworthy.
+  - **Maths (46.7% Accuracy)**: In grade-school word math, the 1.7B parameter AI gets it right less than half the time (47 out of 100).
+  - **Coding (20.4% Accuracy)**: Generating bug-free code on the very first try without being able to run tests is hard for a small 1.7B model—it succeeds about 1 in 5 times.
+- **The Critical "Hallucination" Finding**:
+  - In Maths, when the AI makes a mistake, **it almost never repeats the same mistake twice**. Instead, each time it fails, it hallucinates a brand-new, completely random incorrect number!
+- **Key Takeaway**: High repetition in factual tasks equals high accuracy, but in math and logic, small models hallucinate diverse, unpredictable errors.
 
 ---
 
@@ -310,9 +336,17 @@ All charts below are generated directly from our 10,000 empirical runs with self
 
 ![Latency vs Variability](assets/plots/latency_vs_variability.png)
 
-- **What this chart shows**: Investigates whether there is a correlation between response unpredictability (Shannon entropy) and the time it takes the AI to generate an answer (latency in milliseconds).
-- **How to read it**: Each dot represents an individual prompt. The red dashed line is the linear regression trendline across all 100 prompts.
-- **Key Finding**: There is a strong positive correlation (**$r = +0.54$ overall**, and **$r = +0.90$ within Factual prompts**, $p < 0.0001$). Prompts with high unpredictability or requiring multi-step reasoning take significantly longer to generate (Maths averages **1,496 ms**, while Factual averages **375 ms**).
+> **💡 The Big Intuitive Idea**: When you ask a human a simple question (*"What is 2 + 2?"*), they answer in half a second. But when you ask a tricky puzzle or a confusing question, they pause, ponder, talk more, and take much longer. Does an AI do the exact same thing?
+
+- **What the Numbers Mean**:
+  - **Bottom Axis (X-axis, Unpredictability Score)**: Left side = straightforward questions; Right side = highly uncertain, open-ended questions.
+  - **Side Axis (Y-axis, Time Taken in Milliseconds)**: $1,000\text{ ms} = 1\text{ second}$.
+  - **Each Dot**: Represents one of the 100 benchmark prompts tested.
+  - **The Red Upward Trendline**: Confirms a strong positive correlation ($r = +0.54$ overall, and $r = +0.90$ in factual tasks).
+- **Real-World Non-Technical Example**:
+  - **Simple Facts**: Take only **375 ms** (about 1/3 of a second) because the model knows the answer immediately and writes a short phrase.
+  - **Multi-Step Math**: Takes **1,496 ms** (about 1.5 seconds)—**4 times longer**! The model has to "think out loud" through multiple sentences to reach an answer.
+- **Key Takeaway**: Yes! When an AI is uncertain or faced with a complex reasoning problem, it takes significantly more time and computing power to generate an answer.
 
 ---
 
